@@ -1,8 +1,16 @@
 ---
-title: "About me"
+title: "About Me - Vijay Panthayi"
 output: 
   html_document:
       toc: FALSE
 ---
 
-Add some text and a figure describing myself.
+![](Picture%20of%20Me.jpg){fig-align="center"}
+
+Hello! My name is Vijay Panthayi. Currently, I am twenty-two years of age and pursuing my masters degree in public health with a concentration in biostatistics. My long-term goal is to become a pediatric immunologist and my research interests are in allergies and allergy medication. To get there, I completed a bachelors in chemistry with a pre-med concentration and have done research and shadowing related to immunology and allergies.
+
+I currently have little to no programming knowledge (unless you count AP Comp Sci in high school). However, throughout my MPH degree, I have learned some basic level data analysis and moderate level statistical knowledge. I hope that this course not only ties together the knowledge I have learned previously, but I will be able to apply it into practice.
+
+Here is an interesting video I found regarding starting data analysis from scratch: [How I Would Lean Data Analysis (If I Could Start Over)](https://www.youtube.com/watch?v=qWEHO8b6WbA)
+
+Outside of school and work, I play the Yu-Gi-Oh! card game competitively. It's been very fun and has allowed me to travel and make friends I talk to almost daily.
