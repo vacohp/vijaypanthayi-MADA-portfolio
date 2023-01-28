@@ -100,3 +100,38 @@ summary(fit2)
 
 #Based on the results from the fits, it appears that infant mortality is not a good predictor of either population or life expectancy
 ```
+
+### The following added by SETH LATTNER
+
+Based on the *p*-value (*p*=2.83e-08), I would actually conclude that infant mortality is actually a significant predictor of life expectancy.
+
+#### More plotting
+
+I want to do a little more plotting with the gapminder data for fun.
+
+```{r}
+library(tidyverse)
+
+#calculate per capita GDP
+gdp_per_cap<-africadata$gdp/africadata$population
+summary(gdp_per_cap)
+
+#plot fertility vs per capita GDP for each region of Africa
+ggplot(africadata, aes(gdp_per_cap, fertility, color=region))+
+  geom_point(cex=2, alpha=0.3)+
+  xlab("Per Capita GDP")+
+  ylab("Fertility")+
+  theme_classic()
+
+#model fertility vs per capita GDP for each region of Africa
+new_fit<-lm(fertility~gdp_per_cap+region, data=africadata)
+summary(new_fit)
+
+table<-broom::tidy(new_fit)%>%
+  knitr::kable(digits=3)
+table
+
+#Based on these results, GDP is a significant predictor of fertility for each region
+#of Africa. Obviously, there are many factors that would influence this, but this is
+#still an informative parameter. 
+```
