@@ -5,4 +5,98 @@ output:
     toc: FALSE
 ---
 
-Placeholder file for the future R coding exercise.
+```{r}
+#Load necessary packages
+library(ggplot2)
+library(here)
+
+#Load dslabs package
+library("dslabs")
+
+#Look at help file for gapminder data
+help(gapminder)
+
+#Get an overview of data structure
+str(gapminder)
+
+#Get a summary of data
+summary(gapminder)
+
+#Determine the type of object gapminder is
+class(gapminder)
+
+#Assign only countries in Africa to variable "africadata"
+africadata <- subset(gapminder, continent == "Africa")
+
+#Run the str function on the africadata dataset
+str(africadata)
+
+#Run the summary function on the africadata dataset
+summary(africadata)
+
+#Create a variable from africadata including only infant mortality and life expectancy
+africadata_mort_life <- africadata[ , c("infant_mortality","life_expectancy")]
+
+#Create a variable from africadata including only population size and life expectancy
+africadata_pop_life <- africadata[ , c("population","life_expectancy")]
+
+#Run the str function on the africadata_mort_life variable
+str(africadata_mort_life)
+
+#Run the summary function on the africa_mort_life variable
+summary(africadata_mort_life)
+
+#Run the str function on the africadata_pop_life variable
+str(africadata_pop_life)
+
+#Run the summary function on the africadata_pop_life variable
+summary(africadata_pop_life)
+```
+
+```{r}
+#Create a plot of life expectancy as a function of infant mortality (plot data as points)
+ggplot(data=africadata_mort_life, aes(x=infant_mortality, y=life_expectancy)) +geom_point(size=2, shape=23)
+```
+
+```{r}
+#Create a plot of population size (log) as a function of infant mortality (plot data as points)
+ggplot(data=africadata_pop_life,aes(x=population, y=life_expectancy)) +geom_point(size=2, shape=23)+scale_x_log10("population")
+```
+
+```{r}
+#Determine which years in the dataset have missing values
+africadata_filtered <- africadata[is.na(africadata$infant_mortality),]
+africadata_missing <- unique(africadata_filtered$year)
+print(africadata_missing)
+
+#Create a new variable with the data from africadata only including the year 2000
+africadata_y2000 <- subset(africadata, year == 2000)
+
+#Run the str function on the africadata_y2000 variable
+str(africadata_y2000)
+
+#Run the summary function on the africadata_y2000 variable
+summary(africadata_y2000)
+```
+
+```{r}
+#Create a plot of life expectancy as a function of infant mortality (plot data as points) for the year 2000
+ggplot(data=africadata_y2000, aes(x=infant_mortality, y=life_expectancy)) +geom_point(size=2, shape=23)
+```
+
+```{r}
+#Create a plot of population size (log) as a function of infant mortality (plot data as points) for the year 2000
+ggplot(data=africadata_y2000,aes(x=population, y=life_expectancy)) +geom_point(size=2, shape=23)+scale_x_log10("population")
+```
+
+```{r}
+#Create a simple fit by setting life expectancy as the outcome and infant mortality as the predictory (using data from 2000 only)
+fit1 <- lm(life_expectancy~infant_mortality, data=africadata_y2000)
+summary(fit1)
+
+#Create a simple fit by setting population as the outcome and infant mortality as the predictor (using data from 2000 only)
+fit2 <- lm(population~infant_mortality, data=africadata_y2000)
+summary(fit2)
+
+#Based on the results from the fits, it appears that infant mortality is not a good predictor of either population or life expectancy
+```
