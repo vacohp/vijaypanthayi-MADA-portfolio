@@ -1,0 +1,64 @@
+---
+title: "dataanalysis_exercise"
+subtitle: "Suicide Rates in Georgia Analysis"
+author: "Vijay Panthayi"
+editor: visual
+output:
+  html_document:
+    toc: FALSE
+---
+
+## About the Data Set
+
+#### (The data set was obtained from the data.CDC.gov)
+
+This [dataset](https://data.cdc.gov/NCHS/NCHS-Leading-Causes-of-Death-United-States/bi63-dtpu) contains the age-adjusted death rates for the 10 leading causes of death in the United States beginning in 1999. The age-adjusted rates (per 100,000 population) were based on the 2000 standard population. While it contains an incredibly detailed report about all top 10 causes of death in each of the 50 states (and the District of Columbia) from 1999 to 2017, this data analysis will focus on the temporal trends of suicide rates in Georgia.
+
+### Loading the dataset
+
+```{r}
+#loading the required packages
+library(tidyverse)
+library(here)
+library(dplyr)
+```
+
+```{r}
+#loading the dataset into R
+toptendeath <- read_csv(here("dataanalysis-exercise","data","raw_data","NCHS_-_Leading_Causes_of_Death__United_States.csv"))
+glimpse(toptendeath)
+```
+
+### Cleaning the dataset
+
+The following steps will be to clean the data so that it only contains the factors we will be analyzing and that the data for those variables are clean/usable.
+
+First we are going to reclassify the categorical variables.
+
+```{r}
+toptendeath <- toptendeath %>%
+    mutate(`113 Cause Name` = as.factor(`113 Cause Name`)) %>%
+    mutate(`Cause Name` = as.factor(`Cause Name`)) %>%
+    mutate(State = as.factor(State))
+
+glimpse(toptendeath)
+```
+
+Next, we are going to remove all data points that are not from Georgia. In addition, we are going to remove the 113 Cause Name, as that is not the cause of death category we are using.
+
+```{r}
+clean_toptendeath <- toptendeath %>% select(-(`113 Cause Name`))
+glimpse(clean_toptendeath)
+
+ga_clean_toptendeath <- subset(clean_toptendeath, clean_toptendeath$State == "Georgia")
+glimpse(ga_clean_toptendeath)
+
+ga_suicide <- subset(ga_clean_toptendeath, ga_clean_toptendeath$`Cause Name` == "Suicide")
+glimpse(ga_suicide)
+```
+Now that the data is cleaned and only contains the yarly suicide deaths in Georgia from 1999 - 2017, we can save this new data set.
+```{r}
+ga_suicide %>% saveRDS(here::here("dataanalysis-exercise", "data", "processed_data","ga_suicide.rds"))
+```
+
+### Exploring the dataset
