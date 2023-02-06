@@ -61,7 +61,8 @@ ga_suicide <- subset(ga_clean_toptendeath, ga_clean_toptendeath$`Cause Name` == 
 glimpse(ga_suicide)
 ```
 
-This step created three different data set variables: clean_toptendeath --\> original data set without the "113 Cause Name" column ga_clean_toptendeath --\> clean_toptendeath but only with the observations regarding Georgia ga_suicide --\> ga_clean_toptendeath but only with the observations regarding suicide
+This step created three different data set variables: clean_toptendeath is the original data set without the "113 Cause Name" column ga_clean_toptendeath is the clean_toptendeath but only with the observations regarding Georgia 
+ga_suicide is the ga_clean_toptendeath but only with the observations regarding suicide
 
 Now that the data is cleaned and only contains the yearly suicide deaths in Georgia from 1999 - 2017, we can save this new data set.
 
