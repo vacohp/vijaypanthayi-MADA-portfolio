@@ -15,7 +15,9 @@ output:
 This [dataset](https://data.cdc.gov/NCHS/NCHS-Leading-Causes-of-Death-United-States/bi63-dtpu) contains the age-adjusted death rates for the 10 leading causes of death in the United States beginning in 1999. The age-adjusted rates (per 100,000 population) were based on the 2000 standard population. While it contains an incredibly detailed report about all top 10 causes of death in each of the 50 states (and the District of Columbia) from 1999 to 2017, this data analysis will focus on the temporal trends of suicide rates in Georgia.
 
 ### Loading the dataset
+
 First, we are going to load the necessary packages for this exercise.
+
 ```{r}
 #loading the required packages
 library(tidyverse)
@@ -24,6 +26,7 @@ library(dplyr)
 ```
 
 Now we can read the original data set into R Studio.
+
 ```{r}
 #loading the dataset into R
 toptendeath <- read_csv(here("NCHS_-_Leading_Causes_of_Death__United_States.csv"))
@@ -57,10 +60,8 @@ glimpse(ga_clean_toptendeath)
 ga_suicide <- subset(ga_clean_toptendeath, ga_clean_toptendeath$`Cause Name` == "Suicide")
 glimpse(ga_suicide)
 ```
-This step created three different data set variables:
-clean_toptendeath --> original data set without the "113 Cause Name" column
-ga_clean_toptendeath --> clean_toptendeath but only with the observations regarding Georgia
-ga_suicide --> ga_clean_toptendeath but only with the observations regarding suicide
+
+This step created three different data set variables: clean_toptendeath --\> original data set without the "113 Cause Name" column ga_clean_toptendeath --\> clean_toptendeath but only with the observations regarding Georgia ga_suicide --\> ga_clean_toptendeath but only with the observations regarding suicide
 
 Now that the data is cleaned and only contains the yearly suicide deaths in Georgia from 1999 - 2017, we can save this new data set.
 
@@ -69,3 +70,61 @@ ga_suicide %>% saveRDS(here::here("ga_suicide.rds"))
 ```
 
 ### Exploring the dataset
+
+The following added by SETH LATTNER
+
+First, I want to get an idea of the yearly trends in suicide deaths in GA, based on the clean RDS file created by Vijay. To do this, I will plot both suicide deaths and age-adjusted suicide death rate in GA versus year.
+
+```{r}
+library(ggplot2)
+
+ga_suicide_data <- readRDS(here::here("ga_suicide.rds"))
+
+ggplot(ga_suicide_data, aes(Year, Deaths))+
+  geom_line(size = 1.5, color="darkcyan")+
+  xlab("Year")+
+  ylab("Deaths")+
+  labs(title = "Suicide Deaths in GA, 1999-2017")+
+  theme_bw()
+
+ggplot(ga_suicide_data, aes(Year, `Age-adjusted Death Rate`))+
+  geom_line(size = 1.5, color="plum")+
+  xlab("Year")+
+  ylab("Age-Adjusted Death Rate")+
+  labs(title = "Age-Adjusted Suicide Death Rate in GA, 1999-2017")+
+  theme_bw()
+```
+
+There appears to be an increase in both suicide deaths and age-adjusted suicide death rates in GA during the study period. I will do some simple modeling to determine if there is any statistical correlation.
+
+```{r}
+#linear model of suicide deaths vs year
+suicide_model <- lm(Deaths~Year, data = ga_suicide_data)
+summary(suicide_model)
+
+#linear model of age-adjusted suicide death rate vs year
+death_rate_model <- lm(`Age-adjusted Death Rate`~Year, data = ga_suicide_data)
+summary(death_rate_model)
+```
+
+Now I want to plot these models against the data.
+
+```{r, message=FALSE}
+ggplot(ga_suicide_data, aes(Year, Deaths))+
+  geom_point(cex=3)+
+  geom_smooth(method = "lm", color = "darkcyan")+
+  xlab("Year")+
+  ylab("Deaths")+
+  labs(title = "Suicide Deaths in GA, 1999-2017")+
+  theme_bw()
+
+ggplot(ga_suicide_data, aes(Year, `Age-adjusted Death Rate`))+
+  geom_point(cex=3)+
+  geom_smooth(method = "lm", color = "plum")+
+  xlab("Year")+
+  ylab("Age-Adjusted Death Rate")+
+  labs(title = "Age-Adjusted Suicide Death Rate in GA, 1999-2017")+
+  theme_bw()
+```
+
+While this analysis was rather rudimentary based on the dataset at hand, the inclusion of additional covariates from related datasets could yield more informative results. Overall however, there was a statistically significant increase in the number of suicide deaths and the age-adjusted suicide death rate in GA between the years 1999 and 2017.
