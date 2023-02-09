@@ -5,4 +5,80 @@ output:
     toc: FALSE
 ---
 
-Placeholder file for the future visualization exercise.
+##Introduction
+
+For this exercise, I decided to recreate the graph produced by FiveThirtyEight on [What Do Men Think It Means to Be a Man?](https://fivethirtyeight.com/features/what-do-men-think-it-means-to-be-a-man/). The article states that they asked 1,600 men whether #MeToo changed their thinking on masculinity. The specific graph in question which I shall attempt to recreate is the one labeled by the question it represents: "Do you think that society puts pressure on men in a way that is unhealthy or bad for them?".
+
+**This is the original figure:** ![](Visual_Exercise_Graph_Original.png)
+
+The rest of this page will showcase the process and the code it took to recreate this graph.
+
+##Code/Detailing
+
+First, we want to load the packages necessary to recreate the graph.
+
+```{r}
+#loading the necessary packages
+library(dplyr)
+library(ggplot2)
+library(here)
+install.packages("ggpubr")
+library(ggpubr)
+```
+
+Next, we want to import the raw data into R.
+
+```{r}
+#import the raw data with here() function so it can be replicated on other devices
+raw_masculinity <- read.csv(here("data","masculinity-survey.csv"))
+
+#glimpse of the data
+glimpse(raw_masculinity)
+```
+
+Now that we have loaded the data and ensured it was imported correctly, we need to create a new data set containing only the data necessary to create this graph. In this case, it will be only the data under the question labeled "Do you think that society puts pressure on men in a way that is unhealthy or bad for them?". By the way the data was organized, it seemed easier to just make a new data sheet containing only the table of data that was necessary for this exercise.
+
+```{r}
+#import the raw necessary data with here() function so it can be replicated on other devices
+raw_necessary <- read.csv(here("data","masculinity-survey-exercise.csv"))
+
+#print out the data sheet for the graph
+raw_necessary
+```
+
+We have the data needed from the original data set to recreate the graph from the article. The following steps were taken to try to recreate the original graph.
+
+```{r}
+#create the plot (creating a stacked bar graph)
+finalplot <- ggplot(data=raw_necessary, aes(x = Age_Group , y = Percentage, fill = Response)) +
+  #make the graph fill from 0-100 (to show percentages)
+  geom_col(position = "fill", width = .45) +
+  #alter the width and color of the bars
+  scale_fill_manual(values=c("Yes"='brown1',
+                             "No Answer"='grey',
+                             "No"='cyan3')) +
+  #flip the coordinates of the graph so it goes to the side rather than up and down
+  coord_flip() +
+  #changes the scales from 0-1 to 0%-100%
+  scale_y_continuous(labels = scales::percent) +
+  #Sets up the title and subtitle to be similar, but not accurately, akin to the original graph
+  labs(title='Do you think that society puts pressure on men in a way \nthat is unhealthy or bad for them?',
+       subtitle='DATES                              NO. OF RESPONDENTS\nMay 10-22, 2018               1,615 adult men')
+
+#prints the final plot, removed the axis titles, removed grid and background
+finalplot + theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(), 
+          axis.line = element_line(colour = "black"))
+```
+
+This does not look EXACTLY like the original, but it is a close copy to it.
+
+Things of note I am not able to make exact:
+- The order of the values for age group bars
+- Label the bars ON the graph (hence the legend)
+- Split up All Adult Men from the individual age groups, but still have all of the bars on the same graph
+
+Further examination of the R code and learning what is capable with R may be necessary to make a direct replica from the one posted by FiveThirtyEight. In addition, something that has been shown to be possible on their website, but I am not fully aware of how to do, is making the graph interactive with the mouse. This will also require further learning and examination of the R language and packages.
