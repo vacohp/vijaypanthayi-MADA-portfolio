@@ -25,6 +25,7 @@ library(dplyr)
 library(ggplot2)
 library(here)
 library(ggpubr)
+library(ggthemes)
 ```
 
 Next, we want to import the raw data into R.
@@ -67,12 +68,15 @@ finalplot <- ggplot(data=raw_necessary, aes(x = Age_Group , y = Percentage, fill
        subtitle='DATES                              NO. OF RESPONDENTS\nMay 10-22, 2018               1,615 adult men')
 
 #prints the final plot, removed the axis titles, removed grid and background
-finalplot + theme(axis.title.x = element_blank(),
-          axis.title.y = element_blank(),
-          panel.grid.major = element_blank(), 
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(), 
-          axis.line = element_line(colour = "black"))
+finalplotbase <- finalplot + theme_fivethirtyeight()
+finalplotbase
+#THE FOLLOWING WAS IN PLACE PRIOR TO HELP/REVIEW FROM BETELIHEM
+  #theme(axis.title.x = element_blank(),
+   #       axis.title.y = element_blank(),
+    #      panel.grid.major = element_blank(), 
+     #     panel.grid.minor = element_blank(),
+      #    panel.background = element_blank(), 
+       #   axis.line = element_line(colour = "black"))
 ```
 
 This does not look EXACTLY like the original, but it is a close copy to it.
