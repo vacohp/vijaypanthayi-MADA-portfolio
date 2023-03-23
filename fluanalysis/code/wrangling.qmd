@@ -21,9 +21,9 @@ summary(flu_data_raw)
 
 The following are steps taken to clean the data set for exploration:
 
-1. We can use `!c()` with the `contains()` function to exclude variables that we do not want to analyze.
-2. Finally, we use `drop_na()` to remove all NA observations.
-3. We use `anyNA()` and `glimpse()` to determine if the previous steps worked properly.
+1.  We can use `!c()` with the `contains()` function to exclude variables that we do not want to analyze.
+2.  Finally, we use `drop_na()` to remove all NA observations.
+3.  We use `anyNA()` and `glimpse()` to determine if the previous steps worked properly.
 
 ```{r}
 flu_data_clean <- flu_data_raw %>%
