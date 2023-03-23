@@ -1,0 +1,41 @@
+---
+title: "Flu Data Analysis"
+subtitle: "Wrangling"
+author: "Vijay Panthayi"
+editor: visual
+---
+
+First, we load the tidyverse package.
+
+```{r}
+library(tidyverse)
+```
+
+Next, using the `here()` function and using the `readRDS` function, we import the `SympAct_Any_Pos.Rda` file.
+
+```{r}
+sympact_raw <- here::here("fluanalysis","data","raw_data","SympAct_Any_Pos.Rda")
+flu_data_raw <- readRDS(sympact_raw)
+summary(flu_data_raw)
+```
+
+The following are steps taken to clean the data set for exploration:
+
+1. We can use `!c()` with the `contains()` function to exclude variables that we do not want to analyze.
+2. Finally, we use `drop_na()` to remove all NA observations.
+3. We use `anyNA()` and `glimpse()` to determine if the previous steps worked properly.
+
+```{r}
+flu_data_clean <- flu_data_raw %>%
+                select(!c(contains(c("Score","Total","FluA","FluB","Dxname","Activity")),"Unique.Visit")) %>%
+                drop_na()
+anyNA(flu_data_clean)
+glimpse(flu_data_clean)
+```
+
+Finally, we save the cleaned data set into the `processed_data` folder using the `saveRDS()` function.
+
+```{r}
+flu_clean <- here::here("fluanalysis","data","processed_data","flu_data_processed")
+saveRDS(flu_data_clean,file=flu_clean)
+```

@@ -5,4 +5,3 @@ output:
     toc: FALSE
 ---
 
-Placeholder file for the future Tidy Tuesday exercise.

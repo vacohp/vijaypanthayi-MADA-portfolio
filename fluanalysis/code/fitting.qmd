@@ -1,0 +1,97 @@
+---
+title: "Flu Data Analysis"
+subtitle: "Fitting"
+author: "Vijay Panthayir"
+editor: visual
+---
+
+# Model Fitting
+
+For the purpose of this exercise, the main predictor of interest is going to be `RunnyNose` and that we care about all other predictors. We are going to fit models with each of the two outcomes (body temperature and nausea) and `RunnyNose`. In addition, we are going to fit models with each of the two outcomes (body temperature and nausea) with all predictors. While fitting to one outcome, the other outcome will be considered a predictor (ex. when fitting predictors to body temperature, nausea will be considered a predictor).
+
+This should all be completed with the `tidymodels` framework. We will be using the following commands:\
+`linear_reg()`\
+`set_engine("lm")`\
+`logistic_reg()`\
+`set_engine("glm")`
+
+### 1. Load Data + Fitting Prep
+
+First, lets load the packages needed for the fitting.
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+library(tidyverse)
+library(recipes)
+library(here)
+library(parsnip)
+library(dotwhisker)
+library(performance)
+```
+
+Now, we can load and preview the processed data set.
+
+```{r}
+flu_clean <- readRDS(here::here("fluanalysis", "data","processed_data", "flu_data_processed"))
+glimpse(flu_clean)
+```
+
+Finally, we can use `set_engine()` to create general linear and logistic models.
+
+```{r}
+linear <- linear_reg() %>% 
+              set_engine("lm")
+logistic <- logistic_reg() %>%
+              set_engine("glm")
+```
+
+### 2. Linear Model Fitting
+
+We are going to fit a linear model to the continuous outcome, body temperature, using the main predictor of interest, runny nose.
+
+```{r}
+lm_fit_rn <- linear %>%
+              fit(BodyTemp~RunnyNose,data=flu_clean)
+lm_fit_rn
+```
+### 3. Linear Model Fitting (cont.)
+
+Now we are going to fit a linear model to the continuous outcome, body temperature, using all the predictors.
+
+```{r}
+lm_fit_all <- linear %>%
+              fit(BodyTemp~ . ,data=flu_clean)
+lm_fit_all
+```
+
+### 4. Linear Model Comparisons
+
+```{r}
+lm_fit_rn
+lm_fit_all
+compare_performance(lm_fit_rn,lm_fit_all)
+```
+### 5. Logistic Model Fitting
+
+```{r}
+glm_fit_rn <- logistic %>%
+              fit(Nausea~RunnyNose,data=flu_clean)
+glm_fit_rn
+```
+
+### 6. Logistic Model Fitting (cont.)
+
+```{r}
+glm_fit_all <- logistic %>%
+              fit(Nausea~ . ,data=flu_clean)
+glm_fit_all
+```
+
+### 7. Logistic Model Comparisons
+
+```{r}
+glm_fit_rn
+glm_fit_all
+
+compare_performance(glm_fit_rn,glm_fit_all)
+```

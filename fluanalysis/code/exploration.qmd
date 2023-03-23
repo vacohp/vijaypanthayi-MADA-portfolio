@@ -1,0 +1,156 @@
+---
+title: "Flu Data Analysis"
+subtitle: "Exploration" 
+author: "Vijay Panthayi"
+editor: visual
+---
+
+Before we explore the data set, lets load the necessary packages for exploration.
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(dplyr)
+```
+
+Now, we can load the processed data set to explore.
+
+```{r}
+flu_clean <- readRDS(here::here("fluanalysis","data","processed_data","flu_data_processed"))
+glimpse(flu_clean)
+```
+
+# Data Exploration
+
+### -Outcomes of Interest-
+
+The following are the outcomes of interest:
+
+Body Temperature (continuous)\
+Nausea (categorical)
+
+### -Summary Statistics-
+
+Our goal is to determine how the other symptoms of flu correlate with body temperature and nausea. To do this, we should first look at the summary statistics of body temperature and nausea.
+
+Let's start with body temperature. We will begin with plotting the data for body temperature to visualize the distribution.
+
+```{r}
+flu_clean %>%
+  ggplot() +
+  geom_histogram(aes(BodyTemp)) +
+  theme_bw() +
+  ylab(NULL)
+```
+
+We can see from this histogram that the majority of subjects exhibit normal (98.6 degrees Fahrenheit) body temperatures.
+
+Let's see how many subjects are considered to have a fever (equal to or greater than 100.4 degrees Fahrenheit).
+
+```{r}
+flu_clean %>% count(BodyTemp > 100.4)
+```
+
+We can see that out of the 730 observations, only 78 of them are considered to have a fever.
+
+Now lets take a look at nausea. We can do a quick count of the Nausea data to give us an idea of its distribution.
+
+```{r}
+#Shows the counts
+print(flu_clean %>% count(Nausea))
+```
+
+```{r}
+#Shows the percentages
+with(flu_clean,table(Nausea)) %>%
+    prop.table()
+```
+
+Approximately two-thirds of the observations did not exhibited nausea.
+
+### -Plotting Outcome of Interest Against Predictors-
+
+Now that we have explored the two main outcomes and their distributions, we can plot these outcomes against predictors.
+
+We can do this by plotting body temperature and nausea, respectively, against each predictor.
+
+For body temperature, a box plot will be used to compare between body temperature and the predictors since it is a continuous variable. We are looking for differences in the quartiles and the mean between the box plots produced. A large difference may indicate that a predictor correlates with an increase/decrease in body temperature.
+
+For nausea, a stacked box plot will allow for quick visual comparison between nausea and the predictor since nausea is a categorical variable. A comparison of the proportion of a correlation will be present if there is a significant proportion of observations experiencing the predictor AND nausea simultaneously (or experiencing neither). If the predictor is largely present when nausea isn't, it can be considered a predictor of lack of nausea (or vice-versa).
+
+#### 1. Abdominal Pain
+
+```{r}
+#Stacked histogram of nausea vs. abdominal pain
+ggplot(flu_clean, aes(Nausea))+
+  geom_histogram(aes(fill=AbPain), stat = "count") +
+  theme_bw() +
+  ylab(NULL)
+```
+
+```{r}
+#Boxplot of body temperature vs. abdominal pain
+ggplot(flu_clean, aes(BodyTemp, AbPain))+
+  geom_boxplot(fill="lightblue")+
+  theme_classic()
+```
+
+There appears to be no correlation between abdominal pain and body temperature or nausea. It is worth noting the number of outliers in the higher body temperature ranges for those without abdominal pain.
+
+#### 2. Vomiting
+
+```{r}
+#Stacked histogram of nausea vs. vomiting
+ggplot(flu_clean, aes(Nausea))+
+  geom_histogram(aes(fill=Vomit), stat = "count") +
+  theme_bw() +
+  ylab(NULL)
+```
+
+```{r}
+#Boxplot of body temperature vs. abdominal pain
+ggplot(flu_clean, aes(BodyTemp, Vomit))+
+  geom_boxplot(fill="lightgreen")+
+  theme_classic()
+```
+
+There appears to be a considerably larger proportion of people who are vomitin with those experiencing nausea. This indicates a correlation between the two. In addition, while there is no drastic difference between body temperature means, there is a considerably larger number of outliers in the higher body temperatures for those who are not experiencing vomiting.
+
+#### 3. Fatigue
+
+```{r}
+#Stacked histogram of nausea vs. fatigue
+ggplot(flu_clean, aes(Nausea))+
+  geom_histogram(aes(fill=Fatigue), stat = "count") +
+  theme_bw() +
+  ylab(NULL)
+```
+
+```{r}
+#Boxplot of body temperature vs. abdominal pain
+ggplot(flu_clean, aes(BodyTemp, Fatigue))+
+  geom_boxplot(fill="lightgrey")+
+  theme_classic()
+```
+
+There appears to be a large correlation between fatigue and nausea. However, a majority of those who are not experiencing nausea are still experiencing fatigue. It is difficult to ascertain a correlation from this information. On the other end, there is a significant difference in the box plots. It appears that there is a correlation between experiencing fatigue and having higher body temperatures.
+
+#### 4. Weakness
+
+```{r}
+#Stacked histogram of nausea vs. weakness status
+ggplot(flu_clean, aes(Nausea))+
+  geom_histogram(aes(fill=Weakness), stat = "count") +
+  theme_bw() +
+  ylab(NULL)
+```
+
+```{r}
+#Boxplot of body temperature vs. abdominal pain
+ggplot(flu_clean, aes(BodyTemp, Weakness))+
+  geom_boxplot(fill="tan")+
+  theme_classic()
+```
+
+There appears to be a correlation between high levels of weakness (severe, moderate) and experiencing nausea. In addition, any weakness level also appears to experience higher body temperatures on average compared to feeling no weakness at all.
