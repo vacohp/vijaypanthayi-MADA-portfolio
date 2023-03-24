@@ -426,10 +426,10 @@ CoughIntensityModerate    CoughIntensitySevere             CoughYN2Yes
 <div class="cell-output cell-output-stdout">
 <pre><code># Comparison of Model Performance Indices
 
-Name       | Model |  AIC (weights) | AICc (weights) |  BIC (weights) |    R2 | R2 (adj.) |  RMSE | Sigma
----------------------------------------------------------------------------------------------------------
-lm_fit_rn  |   _lm | 2329.3 (&lt;.001) | 2329.4 (&lt;.001) | 2343.1 (&gt;.999) | 0.012 |     0.011 | 1.188 | 1.190
-lm_fit_all |   _lm | 2303.8 (&gt;.999) | 2307.7 (&gt;.999) | 2469.2 (&lt;.001) | 0.129 |     0.086 | 1.116 | 1.144</code></pre>
+Name       | Model |      AIC | AIC weights |      BIC | BIC weights |    R2 | R2 (adj.) |  RMSE | Sigma
+--------------------------------------------------------------------------------------------------------
+lm_fit_rn  |   _lm | 2329.346 |    2.89e-06 | 2343.125 |        1.00 | 0.012 |     0.011 | 1.188 | 1.190
+lm_fit_all |   _lm | 2303.840 |       1.000 | 2469.189 |    4.22e-28 | 0.129 |     0.086 | 1.116 | 1.144</code></pre>
 </div>
 </div>
 </section>
@@ -569,18 +569,15 @@ Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
 prediction from a rank-deficient fit may be misleading
 
 Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
-prediction from a rank-deficient fit may be misleading
-
-Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
 prediction from a rank-deficient fit may be misleading</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Comparison of Model Performance Indices
 
-Name        | Model | AIC (weights) | AICc (weights) | BIC (weights) | Tjur's R2 |  RMSE | Sigma | Log_loss | Score_log | Score_spherical |   PCP
--------------------------------------------------------------------------------------------------------------------------------------------------
-glm_fit_rn  |  _glm | 948.6 (&lt;.001) |  948.6 (&lt;.001) | 957.8 (&gt;.999) | 1.169e-04 | 0.477 | 1.139 |    0.647 |  -107.871 |           0.012 | 0.545
-glm_fit_all |  _glm | 821.5 (&gt;.999) |  825.1 (&gt;.999) | 982.2 (&lt;.001) |     0.247 | 0.414 | 1.040 |    0.515 |      -Inf |           0.002 | 0.658</code></pre>
+Name        | Model |     AIC | AIC weights |     BIC | BIC weights | Tjur's R2 |  RMSE | Sigma | Log_loss | Score_log | Score_spherical |   PCP
+------------------------------------------------------------------------------------------------------------------------------------------------
+glm_fit_rn  |  _glm | 948.566 |    2.52e-28 | 957.752 |       1.000 | 1.169e-04 | 0.477 | 1.139 |    0.647 |  -107.871 |           0.012 | 0.545
+glm_fit_all |  _glm | 821.471 |        1.00 | 982.227 |    4.84e-06 |     0.247 | 0.414 | 1.040 |    0.515 |      -Inf |           0.002 | 0.658</code></pre>
 </div>
 </div>
 
