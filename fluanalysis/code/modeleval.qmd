@@ -10,6 +10,8 @@ editor: visual
 First, lets load the necessary packages for this process
 
 ```{r, warning=FALSE, message=FALSE}
+library(rsample)
+library(yardstick)
 library(tidymodels)
 library(tidyverse)
 ```
@@ -105,7 +107,6 @@ The model appears to predict the data well since both the training and test data
 
 ### Alternative Model
 
-
 Now, lets repeat these steps with only 1 predictor.
 
 ```{r}
@@ -151,4 +152,147 @@ test_aug1 %>%
 test_aug1 %>%
       roc_auc(truth = Nausea, .pred_No)
 ```
+
 Both ROC-AUC values were close to 0.5, which means this model is not a good fit.
+
+### **Part II. Linear Regression.This section added by Betelihem G.**
+
+### Data Splitting
+
+We'll then need to find a way to create a testing data set from `flu_clean`. We will use this data to test the generated model. The rest of the data will become the training data set.
+
+To do this, we will use `set.seed()` so the analysis is reproducible when random numbers are used. `initial_split()` will be used to split the data.
+
+```{r}
+set.seed(253)
+data_split1 <- initial_split(flu_clean,prop=3/4)
+training_data1 <- training(data_split1)
+test_data1 <- testing(data_split1)
+```
+
+### Workflow Creation and Model Fitting
+
+We will use `tidymodels` to generate our logistic regression model. We will use `recipe()` and `worklfow()` to create the workflow.
+
+```{r}
+# Initiate a new recipe with the continous outcome
+linear_recipe <- recipe(BodyTemp ~ ., data = training_data1)
+# Create the linear regression model
+linear <- linear_reg() %>%
+             set_engine("lm")
+
+
+# Create the workflow
+flu_wflow3 <- 
+      workflow() %>%
+      add_model(linear) %>%
+        add_recipe(linear_recipe)
+flu_wflow3
+```
+
+### Model 1 Evaluation
+
+Now that we have created the workflow, we can fit the model to the training and test data sets created previously.
+
+```{r}
+training_fit1 <- flu_wflow3 %>%
+                fit(data = training_data1)
+test_fit1 <- flu_wflow3 %>%
+                fit(data = test_data1)
+```
+
+The next step is to use the trained workflows, `training_fit`, to predict with unseen test data.
+
+```{r}
+predict(training_fit1, test_data1)
+```
+
+We now want to compare the estimates. To do this, we use `augment()`.
+
+```{r}
+training_aug3 <- augment(training_fit1, training_data1)
+test_aug3 <- augment(test_fit1, test_data1)
+```
+
+```{r}
+test_aug3 %>%
+  select(BodyTemp,.pred)
+```
+
+If we want to assess how well the model makes predictions, we can use Root Mean Square Error (RMSE)to evaluate the model on the `training_data1` and the `test_data1`. The lower the RMSE number the better the model fit is. #for training data
+
+```{r}
+training_aug3 %>%
+      rmse(BodyTemp, .pred)
+```
+
+#Now, same for `test_data`.
+
+```{r}
+test_aug3 %>%
+      rmse(BodyTemp, .pred)
+```
+
+The training model RMSE is 1.15 and the test data RMSE is 0.89. These numbers tell us the difference between the predicted value and the value in the dataset. It seems both training and test models performed well.
+
+#### **Alternative Model with only 1 predictor**
+
+Now, lets repeat these steps with only 1 predictor.The steps are similar to the above procedure. The model type linear remains the same while the recipe changes to include only 1 predictor "RunnyNose".
+
+```{r}
+linear2 <- recipe(BodyTemp ~ RunnyNose, data = training_data1)
+
+flu_wflow4 <- 
+        workflow() %>%
+        add_model(linear) %>%
+        add_recipe(linear2)
+
+training_fit2 <- flu_wflow4 %>%
+        fit(data = training_data1)
+
+test_fit2 <- flu_wflow4 %>%
+        fit(data = test_data1)
+
+training_aug4 <- augment(training_fit2, training_data1)
+test_aug4 <- augment(test_fit2, test_data1)
+```
+
+Lets look at the RMSE for training model.
+
+```{r}
+training_aug4 %>%
+     select(BodyTemp, RunnyNose,.pred)
+```
+
+```{r}
+training_aug4 %>%
+  rmse(BodyTemp,.pred)
+```
+
+Calculate RMSE for testing model
+
+```{r}
+test_aug4 %>%
+     select(BodyTemp, RunnyNose,.pred)
+```
+
+```{r}
+test_aug4 %>%
+  rmse(BodyTemp,.pred)
+```
+
+### Conclusion
+
+*Model 1 with ALL predictors*
+
+RMSE for training:1.15
+
+RMSE for testing:0.89
+
+*Alternative model with only 1 predictor*
+
+RMSE for training:1.24
+
+RMSE for testing:0.98
+
+Overall, based on the RMSE values, it looks like model 1 with all predictors included is a better fit than the alternative model.
